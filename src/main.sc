@@ -23,7 +23,7 @@ theme: /
       if (response.isOk && response.data.docs && response.data.docs.length > 0) {
           $temp.films = response.data.docs.slice(0, 3);
           $reactions.answer("Вот что нашлось:\n" + $temp.films.map(function(f, i) {
-              return `${i+1}. ${f.name} (${f.year})`;
+              return "${i+1}. ${f.name} (${f.year})";
           }).join("\n") + "\nНапишите номер для подробностей.");
       } else {
           $reactions.answer("Фильмы не найдены. Попробуйте другой запрос.");
