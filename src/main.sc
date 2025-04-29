@@ -1,44 +1,46 @@
 require: slotfilling/slotFilling.sc
   module = sys.zb-common
-theme: /start {
+
+theme: /
+  state: Start
     q!: * (привет/start/начать) *
     a: Привет! Я подберу фильм по жанру, году или названию. Например: "Комедии 2020" или "Интерстеллар".
-}
 
-theme: /search {
+  state: Search
     q!: * [~фильм/найди/посоветуй] * (~жанр/год/название) *
-    script: {
-        // Формируем запрос к API Кинопоиска
-        const apiKey =  $secrets.get("api_key");
-        const query = nlp.getSlot("query");
-        const url = `https://api.kinopoisk.dev/movie?search=${encodeURIComponent(query)}&field=name&isStrict=false`;
-        
-        // Отправляем HTTP-запрос
-        const response = http.get(url, {
-            headers: {
-                "X-API-KEY": apiKey
-            }
-        });
-        
-        // Обработка ответа
-        if (response.status === 200 && response.data.docs.length > 0) {
-            $temp.films = response.data.docs.slice(0, 3); // Сохраняем топ-3 фильма
-            a: Вот что нашлось:
-               {{ $temp.films.map((f, i) => `${i+1}. ${f.name} (${f.year})`).join("\n") }}
-               Напишите номер для подробностей.
-        } else {
-            a: Фильмы не найдены. Попробуйте другой запрос.
-        }
-    }
-}
+    script:
+      var apiKey = $secrets.get("api_key");
+      var query = $parseTree.text; 
+      var url = `https://api.kinopoisk.dev/v1.4/movie?search=${encodeURIComponent(query)}&limit=10&isStrict=false`;
+      
+      var response = $http.get(url, {
+          headers: {
+              "X-API-KEY": apiKey
+          }
+      });
+      
+      // Обработка ответа
+      if (response.isOk && response.data.docs && response.data.docs.length > 0) {
+          $temp.films = response.data.docs.slice(0, 3); // Сохраняем топ-3 фильма
+          $reactions.answer("Вот что нашлось:\n" + $temp.films.map(function(f, i) {
+              return `${i+1}. ${f.name} (${f.year})`;
+          }).join("\n") + "\nНапишите номер для подробностей.");
+      } else {
+          $reactions.answer("Фильмы не найдены. Попробуйте другой запрос.");
+      }
 
-theme: /details {
+  state: Details
     q!: * [1/2/3] *
-    script: {
-        const film = $temp.films[parseInt(nlp.getSlot("number")) - 1];
-        a: {{ film.name }} ({{ film.year }})
-           Рейтинг: {{ film.rating.kp || "нет данных" }}
-           Описание: {{ film.description || "Описание отсутствует" }}
-        image: {{ film.poster.url }}  
-    }
-}
+    script:
+      var index = parseInt($parseTree.text) - 1;
+      var film = $temp.films[index];
+      if (film) {
+          $reactions.answer(`${film.name} (${film.year})\n` +
+                            `Рейтинг: ${film.rating?.kp || "нет данных"}\n` +
+                            `Описание: ${film.description || "Описание отсутствует"}`);
+          if (film.poster?.url) {
+              $reactions.image({ url: film.poster.url });
+          }
+      } else {
+          $reactions.answer("Ошибка: фильм не найден. Попробуйте снова.");
+      }
