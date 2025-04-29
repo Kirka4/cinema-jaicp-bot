@@ -22,6 +22,7 @@ theme: /
 
         if (response.isOk && response.data.docs && response.data.docs.length > 0) {
             $temp.films = response.data.docs.slice(0, 3);
+            $reactions.transition("/Details");
             $reactions.answer("Вот что нашлось:\n" + $temp.films.map(function(f, i) {
                 return (i + 1) + ". " + f.name + " (" + f.year + ")";
             }).join("\n") + "\nНапишите номер для подробностей.");
@@ -35,10 +36,14 @@ theme: /
   state: Details
     q!: * [1/2/3] *
     script:
-      var input = parseInt($parseTree.text);
+      if (!$temp.films) {
+        $reactions.answer("Пожалуйста, сначала введите запрос для поиска фильмов.");
+        return;
+      }
 
-      if (isNaN(input) || !$temp.films || input < 1 || input > $temp.films.length) {
-          $reactions.answer("Пожалуйста, выберите номер от 1 до " + ($temp.films ? $temp.films.length : 3) + ".");
+      var input = parseInt($parseTree.text);
+      if (isNaN(input) || input < 1 || input > $temp.films.length) {
+          $reactions.answer("Пожалуйста, выберите номер от 1 до " + $temp.films.length + ".");
           return;
       }
 
@@ -57,7 +62,6 @@ theme: /
               $reactions.image({ url: film.poster.url });
           }
 
-          $reactions.ask("Хотите найти другой фильм? Напишите жанр, год или название.");
-      } else {
-          $reactions.answer("Ошибка: фильм не найден. Попробуйте снова.");
-      }
+          delete $temp.films;
+
+          $re
