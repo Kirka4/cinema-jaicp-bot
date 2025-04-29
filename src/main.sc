@@ -37,11 +37,6 @@ theme: /
   state: Details
     q!: * [1/2/3] *
     script:
-      if (!$temp.films) {
-        // Если $temp.films не существует, значит запрос не был выполнен или произошла ошибка.
-        $reactions.answer("Пожалуйста, сначала введите запрос для поиска фильмов.");
-        return;
-      }
 
       var input = parseInt($parseTree.text);
       if (isNaN(input) || input < 1 || input > $temp.films.length) {
