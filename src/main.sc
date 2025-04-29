@@ -35,7 +35,7 @@ theme: /
       var index = parseInt($parseTree.text) - 1;
       var film = $temp.films[index];
       if (film) {
-          $reactions.answer(`${film.name} (${film.year})\n` +
+          $reactions.answer("${film.name} (${film.year})\n" +
                             `Рейтинг: ${film.rating?.kp || "нет данных"}\n` +
                             `Описание: ${film.description || "Описание отсутствует"}`);
           if (film.poster?.url) {
