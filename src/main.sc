@@ -22,12 +22,13 @@ theme: /
 
         if (response.isOk && response.data.docs && response.data.docs.length > 0) {
             $temp.films = response.data.docs.slice(0, 3);
-            $reactions.transition("/Details");
             $reactions.answer("Вот что нашлось:\n" + $temp.films.map(function(f, i) {
                 return (i + 1) + ". " + f.name + " (" + f.year + ")";
             }).join("\n") + "\nНапишите номер для подробностей.");
+            $reactions.ask("Напишите номер фильма для подробностей.");
         } else {
             $reactions.answer("Фильмы не найдены. Попробуйте другой запрос.");
+            // Повторно запросить информацию
         }
       } catch (e) {
         $reactions.answer("Произошла ошибка при поиске. Попробуйте позже.");
@@ -37,7 +38,7 @@ theme: /
     q!: * [1/2/3] *
     script:
       if (!$temp.films) {
-        // Если пользователь случайно написал 1/2/3 вне контекста — игнорируем
+        // Если $temp.films не существует, значит запрос не был выполнен или произошла ошибка.
         $reactions.answer("Пожалуйста, сначала введите запрос для поиска фильмов.");
         return;
       }
@@ -70,4 +71,5 @@ theme: /
       } else {
           $reactions.answer("Ошибка: фильм не найден. Попробуйте снова.");
       }
+
 
