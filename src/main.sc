@@ -5,9 +5,7 @@ theme: /
   state: Start
     q!: * (привет/start/начать) *
     a: Привет! Я подберу фильм по жанру, году или названию. Например: "Комедии 2020" или "Интерстеллар".
-    transitions:
-      - target: Search
-        if: true
+
 
   state: Search
     q!:
