@@ -50,8 +50,9 @@ theme: /
         if (film.poster && film.poster.url) {
             $reactions.image({ url: film.poster.url });
         }
-     else {
+      } else {
         $reactions.answer("Ошибка: фильм не найден. Попробуйте снова.");
-    }
+      }
+
       
     
