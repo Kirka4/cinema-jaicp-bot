@@ -11,7 +11,7 @@ theme: /
     script:
       var apiKey = $secrets.get("api_key");
       var query = $parseTree.text; 
-      var url = `https://api.kinopoisk.dev/v1.4/movie?search=${encodeURIComponent(query)}&limit=10&isStrict=false`;
+      var url = "https://api.kinopoisk.dev/v1.4/movie?search=${encodeURIComponent(query)}&limit=10&isStrict=false";
       
       var response = $http.get(url, {
           headers: {
@@ -21,7 +21,7 @@ theme: /
       
       // Обработка ответа
       if (response.isOk && response.data.docs && response.data.docs.length > 0) {
-          $temp.films = response.data.docs.slice(0, 3); // Сохраняем топ-3 фильма
+          $temp.films = response.data.docs.slice(0, 3);
           $reactions.answer("Вот что нашлось:\n" + $temp.films.map(function(f, i) {
               return `${i+1}. ${f.name} (${f.year})`;
           }).join("\n") + "\nНапишите номер для подробностей.");
