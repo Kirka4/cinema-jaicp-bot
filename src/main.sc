@@ -37,7 +37,7 @@ theme: /
       // Проверка корректности ввода
       if (isNaN(input) || !$temp.films || input < 1 || input > $temp.films.length) {
           $reactions.answer("Пожалуйста, выберите номер от 1 до " + ($temp.films ? $temp.films.length : 3) + ".");
-          $go(Search); // Переводим пользователя обратно в состояние поиска
+          $reactions.transition("Search");
           return;
       }
 
