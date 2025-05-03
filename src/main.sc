@@ -3,13 +3,13 @@ require: slotfilling/slotFilling.sc
 
 theme: /
 
-state Start
-  q!: *(привет|start|начать)*
-  a: |
+  state Start
+   q!: *(привет|start|начать)*
+   a: |
     Привет! Я подберу фильм по жанру, году или названию. Например: "Комедии 2020" или "Интерстеллар".
-  script: |
-    // Переход к поиску
-    $state.to("Search");
+    script: |
+      // Переход к поиску
+      $state.to("Search");
 
 
   state: Search
